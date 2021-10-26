@@ -3,11 +3,14 @@
 #[macro_use]
 extern crate napi_derive;
 
-use jsonschema::{Draft, JSONSchema};
+use jsonschema::JSONSchema;
 use serde_json::from_str;
 use std::convert::TryInto;
 
-use napi::{CallContext, Env, JsBoolean, JsNumber, JsObject, JsString, Result, Task};
+use napi::{
+  CallContext, Env, Error, JsBoolean, JsNumber, JsObject, JsString, JsUndefined, Result, Status,
+  Task,
+};
 
 #[cfg(all(
   any(windows, unix),
@@ -56,10 +59,24 @@ fn is_valid_sync(ctx: CallContext) -> Result<JsBoolean> {
 }
 
 #[js_function(2)]
-fn validate_sync(ctx: CallContext) -> Result<JsNumber> {
-  let argument: u32 = ctx.get::<JsNumber>(0)?.try_into()?;
-
-  ctx.env.create_uint32(argument + 100)
+fn validate_sync(ctx: CallContext) -> Result<JsUndefined> {
+  let input = ctx.get::<JsString>(0)?.into_utf8()?;
+  let schema = ctx.get::<JsString>(1)?.into_utf8()?;
+  let input_json = from_str(input.as_str()?)?;
+  let schema_json = from_str(schema.as_str()?)?;
+  let compiled = JSONSchema::compile(&schema_json).expect("A valid schema");
+  let result = compiled.validate(&input_json);
+  if let Err(errors) = result {
+    let mut error_message = String::new();
+    for error in errors {
+      error_message += &format!(
+        "Validation error: {}; Instance path: {}; \n",
+        error, error.instance_path
+      );
+    }
+    return Err(Error::new(Status::GenericFailure, error_message));
+  }
+  ctx.env.get_undefined()
 }
 
 #[js_function(2)]

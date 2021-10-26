@@ -24,11 +24,11 @@ async function run() {
   await b.suite(
     'Validate Sync',
 
-    b.add('Native isValidSync', () => {
+    b.add('Native validateSync', () => {
       validateSync(foo, fooSchema)
     }),
 
-    b.add('JavaScript isValidSync', () => {
+    b.add('JavaScript validateSync', () => {
       const ajv = new Ajv()
       const validate = ajv.compile(fooSchemaObject)
       validate(fooObject)

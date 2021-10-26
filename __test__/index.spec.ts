@@ -1,7 +1,7 @@
 import test from 'ava'
 
 // import { isValidSync, isValid, validateSync, validate } from '../index'
-import { isValidSync } from '../index'
+import { isValidSync, validateSync } from '../index'
 
 const schema = JSON.stringify({
   type: 'object',
@@ -28,10 +28,10 @@ test('isValidSync function from native code', (t) => {
   t.assert(!isValidSync(exceptionData, schema))
 })
 
-// test('validateSync function from native code', (t) => {
-//   t.notThrows(() => validateSync(correctData, schema))
-//   t.throws(() => validateSync(exceptionData, schema))
-// })
+test('validateSync function from native code', (t) => {
+  t.notThrows(() => validateSync(correctData, schema))
+  t.throws(() => validateSync(exceptionData, schema))
+})
 
 // test('isValid async function from native code', async (t) => {
 //   const trueValue = await isValid(correctData, schema)
