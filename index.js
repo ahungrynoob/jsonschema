@@ -1,11 +1,24 @@
 const { loadBinding } = require('@node-rs/helper')
 
-/**
- * __dirname means load native addon from current dir
- * 'jsonschema' means native addon name is `jsonschema`
- * the first arguments was decided by `napi.name` field in `package.json`
- * the second arguments was decided by `name` field in `package.json`
- * loadBinding helper will load `jsonschema.[PLATFORM].node` from `__dirname` first
- * If failed to load addon, it will fallback to load from `@node-rs/jsonschema-[PLATFORM]`
- */
-module.exports = loadBinding(__dirname, 'jsonschema', '@node-rs/jsonschema')
+const {
+  isValid: _isValid,
+  validate: _validate,
+  isValidSync: _isValidSync,
+  validateSync: _validateSync,
+} = loadBinding(__dirname, 'jsonschema', '@node-rs/jsonschema')
+
+module.exports.isValid = function isValid(input, schema) {
+  return _isValid(Buffer.from(input), Buffer.from(schema))
+}
+
+module.exports.isValidSync = function isValidSync(input, schema) {
+  return _isValidSync(input, schema)
+}
+
+module.exports.validate = function validate(input, schema) {
+  return _validate(Buffer.from(input), Buffer.from(schema))
+}
+
+module.exports.validateSync = function uncompress(input, schema) {
+  return _validateSync(input, schema)
+}

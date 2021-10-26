@@ -5,11 +5,11 @@ extern crate napi_derive;
 
 use jsonschema::JSONSchema;
 use serde_json::from_str;
-use std::convert::TryInto;
+use std::str::from_utf8;
 
 use napi::{
-  CallContext, Env, Error, JsBoolean, JsNumber, JsObject, JsString, JsUndefined, Result, Status,
-  Task,
+  CallContext, Env, Error, JsBoolean, JsBuffer, JsBufferValue, JsNull, JsObject, JsString,
+  JsUndefined, Ref, Result, Status, Task,
 };
 
 #[cfg(all(
@@ -21,21 +21,81 @@ use napi::{
 #[global_allocator]
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
-struct AsyncTask(u32);
+struct AsyncIsValidTask {
+  input: Ref<JsBufferValue>,
+  schema: Ref<JsBufferValue>,
+}
 
-impl Task for AsyncTask {
-  type Output = u32;
-  type JsValue = JsNumber;
+impl Task for AsyncIsValidTask {
+  type Output = bool;
+  type JsValue = JsBoolean;
 
   fn compute(&mut self) -> Result<Self::Output> {
-    use std::thread::sleep;
-    use std::time::Duration;
-    sleep(Duration::from_millis(self.0 as u64));
-    Ok(self.0 * 2)
+    let input = from_str(
+      from_utf8(&self.input).map_err(|e| Error::new(Status::StringExpected, format!("{}", e)))?,
+    )?;
+    let schema = from_str(
+      from_utf8(&self.schema).map_err(|e| Error::new(Status::StringExpected, format!("{}", e)))?,
+    )?;
+    let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+    Ok(compiled.is_valid(&input))
   }
 
   fn resolve(self, env: Env, output: Self::Output) -> Result<Self::JsValue> {
-    env.create_uint32(output)
+    self.input.unref(env)?;
+    self.schema.unref(env)?;
+    env.get_boolean(output)
+  }
+
+  fn reject(self, env: Env, err: Error) -> Result<Self::JsValue> {
+    self.input.unref(env)?;
+    self.schema.unref(env)?;
+    Err(err)
+  }
+}
+
+struct AsyncValidateTask {
+  input: Ref<JsBufferValue>,
+  schema: Ref<JsBufferValue>,
+}
+
+impl Task for AsyncValidateTask {
+  type Output = ();
+  type JsValue = JsNull;
+
+  fn compute(&mut self) -> Result<Self::Output> {
+    let input = from_str(
+      from_utf8(&self.input).map_err(|e| Error::new(Status::StringExpected, format!("{}", e)))?,
+    )?;
+    let schema = from_str(
+      from_utf8(&self.schema).map_err(|e| Error::new(Status::StringExpected, format!("{}", e)))?,
+    )?;
+
+    let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+    let result = compiled.validate(&input);
+    if let Err(errors) = result {
+      let mut error_message = String::from("");
+      for error in errors {
+        error_message += &format!(
+          "Validation error: {}; Instance path: {}; \n",
+          error, error.instance_path
+        );
+      }
+      return Err(Error::new(Status::GenericFailure, error_message));
+    }
+    Ok(())
+  }
+
+  fn resolve(self, env: Env, _output: Self::Output) -> Result<Self::JsValue> {
+    self.input.unref(env)?;
+    self.schema.unref(env)?;
+    env.get_null()
+  }
+
+  fn reject(self, env: Env, err: Error) -> Result<Self::JsValue> {
+    self.input.unref(env)?;
+    self.schema.unref(env)?;
+    Err(err)
   }
 }
 
@@ -67,7 +127,7 @@ fn validate_sync(ctx: CallContext) -> Result<JsUndefined> {
   let compiled = JSONSchema::compile(&schema_json).expect("A valid schema");
   let result = compiled.validate(&input_json);
   if let Err(errors) = result {
-    let mut error_message = String::new();
+    let mut error_message = String::from("");
     for error in errors {
       error_message += &format!(
         "Validation error: {}; Instance path: {}; \n",
@@ -81,16 +141,24 @@ fn validate_sync(ctx: CallContext) -> Result<JsUndefined> {
 
 #[js_function(2)]
 fn is_valid(ctx: CallContext) -> Result<JsObject> {
-  let argument: u32 = ctx.get::<JsNumber>(0)?.try_into()?;
-  let task = AsyncTask(argument);
+  let input = ctx.get::<JsBuffer>(0)?;
+  let schema = ctx.get::<JsBuffer>(1)?;
+  let task = AsyncIsValidTask {
+    input: input.into_ref()?,
+    schema: schema.into_ref()?,
+  };
   let async_task = ctx.env.spawn(task)?;
   Ok(async_task.promise_object())
 }
 
 #[js_function(2)]
 fn validate(ctx: CallContext) -> Result<JsObject> {
-  let argument: u32 = ctx.get::<JsNumber>(0)?.try_into()?;
-  let task = AsyncTask(argument);
+  let input = ctx.get::<JsBuffer>(0)?;
+  let schema = ctx.get::<JsBuffer>(1)?;
+  let task = AsyncValidateTask {
+    input: input.into_ref()?,
+    schema: schema.into_ref()?,
+  };
   let async_task = ctx.env.spawn(task)?;
   Ok(async_task.promise_object())
 }
