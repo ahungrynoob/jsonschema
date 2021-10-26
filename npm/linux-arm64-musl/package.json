@@ -1,0 +1,19 @@
+{
+  "name": "@node-rs/jsonschema-linux-arm64-musl",
+  "version": "0.0.1",
+  "os": ["linux"],
+  "cpu": ["arm64"],
+  "main": "jsonschema.linux-arm64-musl.node",
+  "files": ["jsonschema.linux-arm64-musl.node"],
+  "description": "A node package based on jsonschema-rs for performing JSON schema validation",
+  "keywords": ["napi-rs", "NAPI", "N-API", "Rust", "node-addon", "node-addon-api"],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": "git@github.com:ahungrynoob/jsonschema.git"
+}
