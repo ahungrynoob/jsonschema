@@ -69,6 +69,7 @@ jobs:
           - host: ubuntu-latest
             target: 'armv7-unknown-linux-gnueabihf'
             setup: |
+              sudo apt-get update
               sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf -y
             build: yarn build --target=armv7-unknown-linux-gnueabihf
           - host: ubuntu-latest
