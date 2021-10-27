@@ -24,11 +24,11 @@ async function run() {
   await b.suite(
     'Validate Sync',
 
-    b.add('ajv::validateSync', () => {
+    b.add('@node-rs/jsonschema::validateSync', () => {
       validateSync(foo, fooSchema)
     }),
 
-    b.add('@node-rs/jsonschema::validateSync', () => {
+    b.add('ajv::validateSync', () => {
       const ajv = new Ajv()
       const validate = ajv.compile(fooSchemaObject)
       validate(fooObject)

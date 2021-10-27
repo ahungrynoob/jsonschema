@@ -1,10 +1,11 @@
 # `@node-rs/jsonschema`
 
 ![https://github.com/ahungrynoob/jsonschema/actions](https://github.com/ahungrynoob/jsonschema/workflows/CI/badge.svg)
+![](https://img.shields.io/npm/dm/@node-rs/jsonschema.svg?sanitize=true)
 
 > A node package based on jsonschema-rs for performing JSON schema validation.
 
-## Install this test package
+## Install
 
 ```
 yarn add @node-rs/jsonschema
@@ -12,9 +13,7 @@ yarn add @node-rs/jsonschema
 
 ## Support matrix
 
-### Operating Systems
-
-|                  | node12 | node14 | node16 |
+| Operating Systems| node12 | node14 | node16 |
 | ---------------- | ------ | ------ | ------ |
 | Windows x64      | ✓      | ✓      | ✓      |
 | Windows x32      | ✓      | ✓      | ✓      |
@@ -29,69 +28,99 @@ yarn add @node-rs/jsonschema
 | Android arm64    | ✓      | ✓      | ✓      |
 | FreeBSD x64      | ✓      | ✓      | ✓      |
 
-## Ability
+## Usage
+```javascript
+const { isValidSync, validateSync, isValid, validate } = require("@node-rs/jsonschema");
 
-### Build
+const schema = JSON.stringify({
+  type: 'object',
+  properties: {
+    foo: { type: 'integer' },
+    bar: { type: 'string' },
+  },
+  required: ['foo'],
+  additionalProperties: false,
+})
 
-After `yarn build/npm run build` command, you can see `jsonschema.[darwin|win32|linux].node` file in project root. This is the native addon built from [lib.rs](./src/lib.rs).
+const input = JSON.stringify({
+  foo: 1,
+  bar: 'abc',
+})
 
-### Test
+const exceptionInput = JSON.stringify({
+  foo: 'abc',
+  bar: 1,
+})
 
-With [ava](https://github.com/avajs/ava), run `yarn test/npm run test` to testing native addon. You can also switch to another testing framework if you want.
+// check whether the input meet schema
+const result = isValidSync(input, schema);
+console.log(result); // true
 
-### CI
+try {
+  validateSync(exceptionInput, schema);
+}catch(e){
+  // it will throw error if input doesn't meet schema
+  console.log(e.message); // Validation error: 1 is not of type "string"; Instance path: /bar; \nValidation error: "abc" is not of type "integer"; Instance path: /foo; \n
+}
 
-With GitHub actions, every commits and pull request will be built and tested automatically in [`node@12`, `node@14`, `@node16`] x [`macOS`, `Linux`, `Windows`] matrix. You will never be afraid of the native addon broken in these platforms.
+// promise version of isValidSync
+isValid(input, schema).then((result) => {
+  console.log(result); // true
+})
 
-### Release
-
-Release native package is very difficult in old days. Native packages may ask developers who use its to install `build toolchain` like `gcc/llvm` , `node-gyp` or something more.
-
-With `GitHub actions`, we can easily prebuild `binary` for major platforms. And with `N-API`, we should never afraid of **ABI Compatible**.
-
-The other problem is how to deliver prebuild `binary` to users. Download it in `postinstall` script is a common way which most packages do it right now. The problem of this solution is it introduced many other packages to download binary which has not been used by `runtime codes`. The other problem is some user may not easily download the binary from `GitHub/CDN` if they are behind private network (But in most case, they have a private NPM mirror).
-
-In this package we choose a better way to solve this problem. We release different `npm packages` for different platform. And add it to `optionalDependencies` before release the `Major` package to npm.
-
-`NPM` will choose which native package should download from `registry` automatically. You can see [npm](./npm) dir for details. And you can also run `yarn add @node-rs/jsonschema` to see how it works.
-
-## Develop requirements
-
-- Install latest `Rust`
-- Install `Node.js@10+` which fully supported `Node-API`
-- Install `yarn@1.x`
-
-## Test in local
-
-- yarn
-- yarn build
-- yarn test
-
-And you will see:
-
-```bash
-$ ava --verbose
-
-  ✔ sync function from native code
-  ✔ sleep function from native code (201ms)
-  ─
-
-  2 tests passed
-✨  Done in 1.12s.
+// promise version of validateSync
+validate(input, schema).then(() => {
+  console.log("feel good and input meet schema");
+}).catch((e) => {
+  // it will reject if input doesn't meet schema
+  console.log(e.message); // Validation error: 1 is not of type "string"; Instance path: /bar; \nValidation error: "abc" is not of type "integer"; Instance path: /foo; \n
+})
 ```
 
-## Release package
+## API
+```typescript
+export const isValidSync: (input: string, schema: string) => boolean
 
-Ensure you have set you **NPM_TOKEN** in `GitHub` project setting.
+export const validateSync: (input: string, schema: string) => void
 
-In `Settings -> Secrets`, add **NPM_TOKEN** into it.
+export const isValid: (
+  input: Buffer | string | ArrayBuffer | Uint8Array,
+  schema: Buffer | string | ArrayBuffer | Uint8Array,
+) => Promise<boolean>
 
-When you want release package:
-
+export const validate: (
+  input: Buffer | string | ArrayBuffer | Uint8Array,
+  schema: Buffer | string | ArrayBuffer | Uint8Array,
+) => Promise<null>
 ```
-yarn version [xxx]
 
-git push --follow-tags
+## Bench
+
+### Hardware
 ```
+Model Name:	MacBook Pro
+Model Identifier:	MacBookPro16,1
+Processor Name:	6-Core Intel Core i7
+Processor Speed:	2.6 GHz
+Number of Processors:	1
+Total Number of Cores:	6
+L2 Cache (per Core):	256 KB
+L3 Cache:	12 MB
+Hyper-Threading Technology:	Enabled
+Memory:	32 GB
+```
+### Result
+```
+Running "Validate Sync" suite...
+Progress: 100%
 
-GitHub actions will do the rest job for you.
+  @node-rs/jsonschema::validateSync:
+    105 138 ops/s, ±2.04%   | fastest
+
+  ajv::validateSync:
+    178 ops/s, ±2.46%       | slowest, 99.83% slower
+
+Finished 2 cases!
+  Fastest: @node-rs/jsonschema::validateSync
+  Slowest: ajv::validateSync
+```
