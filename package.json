@@ -1,6 +1,6 @@
 {
   "name": "@node-rs/jsonschema",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A node package based on jsonschema-rs for performing JSON schema validation",
   "main": "index.js",
   "repository": "git@github.com:ahungrynoob/jsonschema.git",
