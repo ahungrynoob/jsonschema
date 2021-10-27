@@ -42,8 +42,6 @@ test('isValid async function from native code', async (t) => {
 test('validate async function from native code', async (t) => {
   await t.notThrowsAsync(validate(correctData, schema))
   const error = await t.throwsAsync(validate(exceptionData, schema))
-  // TODO: check the message content;
-  console.error(error.message)
   t.is(
     error.message,
     `Validation error: 1 is not of type "string"; Instance path: /bar; \nValidation error: "abc" is not of type "integer"; Instance path: /foo; \n`,
