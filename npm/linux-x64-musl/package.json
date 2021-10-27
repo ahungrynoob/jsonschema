@@ -1,12 +1,25 @@
 {
   "name": "@node-rs/jsonschema-linux-x64-musl",
-  "version": "0.0.1",
-  "os": ["linux"],
-  "cpu": ["x64"],
+  "version": "0.1.0",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ],
   "main": "jsonschema.linux-x64-musl.node",
-  "files": ["jsonschema.linux-x64-musl.node"],
+  "files": [
+    "jsonschema.linux-x64-musl.node"
+  ],
   "description": "A node package based on jsonschema-rs for performing JSON schema validation",
-  "keywords": ["napi-rs", "NAPI", "N-API", "Rust", "node-addon", "node-addon-api"],
+  "keywords": [
+    "napi-rs",
+    "NAPI",
+    "N-API",
+    "Rust",
+    "node-addon",
+    "node-addon-api"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">= 10"
