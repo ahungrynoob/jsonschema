@@ -22,8 +22,6 @@ static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 #[module_exports]
 fn init(mut exports: JsObject) -> Result<()> {
   exports.create_named_method("compile", compile)?;
-  exports.create_named_method("isValid", is_valid)?;
-  exports.create_named_method("validate", validate)?;
   Ok(())
 }
 
