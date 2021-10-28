@@ -5,6 +5,37 @@
 
 > A node package based on jsonschema-rs for performing JSON schema validation.
 
+## Bench
+**[ajv](https://github.com/ajv-validator/ajv) is much faster than this lib.**
+### Hardware
+```
+Model Name:	MacBook Pro
+Model Identifier:	MacBookPro16,1
+Processor Name:	6-Core Intel Core i7
+Processor Speed:	2.6 GHz
+Number of Processors:	1
+Total Number of Cores:	6
+L2 Cache (per Core):	256 KB
+L3 Cache:	12 MB
+Hyper-Threading Technology:	Enabled
+Memory:	32 GB
+```
+### Result
+```
+Running "Validate Sync" suite...
+Progress: 100%
+
+  @node-rs/jsonschema::validate:
+    2 642 863 ops/s, ±1.42%    | slowest, 92.86% slower
+
+  ajv::validate:
+    36 997 776 ops/s, ±0.46%   | fastest
+
+Finished 2 cases!
+  Fastest: ajv::validate
+  Slowest: @node-rs/jsonschema::validate
+```
+
 ## Install
 
 ```
@@ -30,9 +61,9 @@ yarn add @node-rs/jsonschema
 
 ## Usage
 ```javascript
-const { isValidSync, validateSync, isValid, validate } = require("@node-rs/jsonschema");
+const { compile } = require("@node-rs/jsonschema");
 
-const schema = JSON.stringify({
+const schema = {
   type: 'object',
   properties: {
     foo: { type: 'integer' },
@@ -40,7 +71,7 @@ const schema = JSON.stringify({
   },
   required: ['foo'],
   additionalProperties: false,
-})
+};
 
 const input = JSON.stringify({
   foo: 1,
@@ -52,75 +83,21 @@ const exceptionInput = JSON.stringify({
   bar: 1,
 })
 
+const validator = compile(schema);
+
 // check whether the input meet schema
-const result = isValidSync(input, schema);
+const result = validator(input);
 console.log(result); // true
 
-try {
-  validateSync(exceptionInput, schema);
-}catch(e){
-  // it will throw error if input doesn't meet schema
-  console.log(e.message); // Validation error: 1 is not of type "string"; Instance path: /bar; \nValidation error: "abc" is not of type "integer"; Instance path: /foo; \n
-}
-
-// promise version of isValidSync
-isValid(input, schema).then((result) => {
-  console.log(result); // true
-})
-
-// promise version of validateSync
-validate(input, schema).then(() => {
-  console.log("feel good and input meet schema");
-}).catch((e) => {
-  // it will reject if input doesn't meet schema
-  console.log(e.message); // Validation error: 1 is not of type "string"; Instance path: /bar; \nValidation error: "abc" is not of type "integer"; Instance path: /foo; \n
-})
+const result = validator(exceptionInput);
+console.log(result); // false
 ```
 
 ## API
 ```typescript
-export const isValidSync: (input: string, schema: string) => boolean
+export declare class JSONSchema {
+  isValid(input: any): boolean
+}
 
-export const validateSync: (input: string, schema: string) => void
-
-export const isValid: (
-  input: Buffer | string | ArrayBuffer | Uint8Array,
-  schema: Buffer | string | ArrayBuffer | Uint8Array,
-) => Promise<boolean>
-
-export const validate: (
-  input: Buffer | string | ArrayBuffer | Uint8Array,
-  schema: Buffer | string | ArrayBuffer | Uint8Array,
-) => Promise<null>
-```
-
-## Bench
-
-### Hardware
-```
-Model Name:	MacBook Pro
-Model Identifier:	MacBookPro16,1
-Processor Name:	6-Core Intel Core i7
-Processor Speed:	2.6 GHz
-Number of Processors:	1
-Total Number of Cores:	6
-L2 Cache (per Core):	256 KB
-L3 Cache:	12 MB
-Hyper-Threading Technology:	Enabled
-Memory:	32 GB
-```
-### Result
-```
-Running "Validate Sync" suite...
-Progress: 100%
-
-  @node-rs/jsonschema::validateSync:
-    105 138 ops/s, ±2.04%   | fastest
-
-  ajv::validateSync:
-    178 ops/s, ±2.46%       | slowest, 99.83% slower
-
-Finished 2 cases!
-  Fastest: @node-rs/jsonschema::validateSync
-  Slowest: ajv::validateSync
+export const compile: (schema: any) => (input: string) => boolean
 ```

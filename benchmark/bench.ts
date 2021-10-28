@@ -1,15 +1,14 @@
 import Ajv from 'ajv'
 import b from 'benny'
 
-import { validateSync } from '../index'
+import { compile } from '../index'
 
-const fooObject = {
+const input = {
   foo: 1,
   bar: 'abc',
 }
-const foo = JSON.stringify(fooObject)
 
-const fooSchemaObject = {
+const schema = {
   type: 'object',
   properties: {
     foo: { type: 'integer' },
@@ -18,20 +17,22 @@ const fooSchemaObject = {
   required: ['foo'],
   additionalProperties: false,
 }
-const fooSchema = JSON.stringify(fooSchemaObject)
+
+const ajv = new Ajv()
+const ajvValidator = ajv.compile(schema)
+const nativeValidator = compile(schema)
+const inputStr = JSON.stringify(input)
 
 async function run() {
   await b.suite(
     'Validate Sync',
 
-    b.add('@node-rs/jsonschema::validateSync', () => {
-      validateSync(foo, fooSchema)
+    b.add('@node-rs/jsonschema::validate', () => {
+      nativeValidator(inputStr)
     }),
 
-    b.add('ajv::validateSync', () => {
-      const ajv = new Ajv()
-      const validate = ajv.compile(fooSchemaObject)
-      validate(fooObject)
+    b.add('ajv::validate', () => {
+      ajvValidator(input)
     }),
 
     b.cycle(),
