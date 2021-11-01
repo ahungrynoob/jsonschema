@@ -100,10 +100,10 @@
   resolved "https://registry.nlark.com/@humanwhocodes/object-schema/download/@humanwhocodes/object-schema-1.2.0.tgz#87de7af9c231826fdd68ac7258f77c429e0e5fcf"
   integrity sha1-h956+cIxgm/daKxyWPd8Qp4OX88=
 
-"@napi-rs/cli@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.npmmirror.com/@napi-rs/cli/download/@napi-rs/cli-1.3.3.tgz#985fcaab5e77f8eec45511010717550cc03d6b41"
-  integrity sha1-mF/Kq153+O7EVREBBxdVDMA9a0E=
+"@napi-rs/cli@^1.3.5":
+  version "1.3.5"
+  resolved "https://registry.yarnpkg.com/@napi-rs/cli/-/cli-1.3.5.tgz#89e4d97127edc4ed10a06637a43d27a1ed3c288d"
+  integrity sha512-Z0KZIciemioYODTyO908v2AtL8Zg4sohQDD+dyHeHmOiOfaez/y/xQ8XnpOHc2W5fRidKUW+MVWyTtpLTbKsqw==
   dependencies:
     inquirer "^8.1.3"
 
