@@ -79,7 +79,7 @@
   },
   "dependencies": {
     "@node-rs/helper": "^1.2.1",
-    "@types/node": "^16.11.6"
+    "@types/node": "^16.11.7"
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [
