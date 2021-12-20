@@ -12,7 +12,7 @@ crate-type = ["cdylib"]
 [dependencies]
 jsonschema = { version = "0.13.1", default-features = false, features = [ "draft201909" ] }
 napi = {version = "2", features = ["serde-json", "napi5"] }
-napi-derive = "1"
+napi-derive = "2"
 serde_json = "1"
 
 [target.'cfg(all(any(windows, unix), target_arch = "x86_64", not(target_env = "musl")))'.dependencies]
