@@ -129,24 +129,25 @@
   resolved "https://registry.yarnpkg.com/@swc-node/core/-/core-1.9.1.tgz#f86d6be5f97beaff91786f0266734ec85e8456c7"
   integrity sha512-Mh4T/PmQOpPtqw1BNvU38uWzsXbd5RJji17YBXnj7JDDE5KlTR9sSo2RKxWKDVtHbdcD1S+CtyZXA93aEWlfGQ==
 
-"@swc-node/register@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@swc-node/register/-/register-1.5.2.tgz#7a7180a83bcec4fedf08dd60afd985804d358d02"
-  integrity sha512-uXgAWEmbrg1zFxv6x/0rTQuToEuCxxZDaA7KyJi5+FwRcBTS79tBYEqUROH8otcTnHdh4njAbWdETFPRD4Pogw==
+"@swc-node/register@^1.5.3":
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/@swc-node/register/-/register-1.5.3.tgz#7dcc031dd12a723765a5e8369a61505340167b2f"
+  integrity sha512-E7hPOUgqs8XM2bpfOyl2ZFTELtpxosvSGhtoh+hVLeTWCE8BFA0IBYMl7WbjjfxZrOPxReGUfTxUb0IgBEvUlQ==
   dependencies:
     "@swc-node/core" "^1.9.1"
-    "@swc-node/sourcemap-support" "^0.2.1"
+    "@swc-node/sourcemap-support" "^0.2.2"
     colorette "^2.0.19"
     debug "^4.3.4"
     pirates "^4.0.5"
     tslib "^2.4.0"
 
-"@swc-node/sourcemap-support@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@swc-node/sourcemap-support/-/sourcemap-support-0.2.1.tgz#56963366a75d606cde7a769b051c3a3339e5e30b"
-  integrity sha512-+49bBLKEenzAybTIlOlZGdif5wK0ZHjrAtIUtyd5nSthFKSTzcmfmFayqVmk5ZoVZI2AG+qJOx5+K1vZt17TJQ==
+"@swc-node/sourcemap-support@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@swc-node/sourcemap-support/-/sourcemap-support-0.2.2.tgz#6718d1ef3f4159c571b331cd4c20096a998cd385"
+  integrity sha512-PA4p7nC5LwPdEVcQXFxMTpfvizYPeMoB55nIIx+yC3FiLnyPgC2hcpUitPy5h8RRGdCZ/Mvb2ryEcVYS8nI6YA==
   dependencies:
     source-map-support "^0.5.21"
+    tslib "^2.4.0"
 
 "@types/json-schema@^7.0.7":
   version "7.0.9"
