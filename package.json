@@ -65,7 +65,7 @@
     "ajv": "^8.11.0",
     "ava": "^4.3.3",
     "benny": "^3.7.1",
-    "chalk": "^5.1.0",
+    "chalk": "^5.1.2",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
