@@ -86,10 +86,10 @@
   resolved "https://registry.nlark.com/@humanwhocodes/object-schema/download/@humanwhocodes/object-schema-1.2.0.tgz#87de7af9c231826fdd68ac7258f77c429e0e5fcf"
   integrity sha1-h956+cIxgm/daKxyWPd8Qp4OX88=
 
-"@napi-rs/cli@^2.12.0":
-  version "2.12.0"
-  resolved "https://registry.yarnpkg.com/@napi-rs/cli/-/cli-2.12.0.tgz#c4071e1dce2e0a3c9562fb3c437e94816564ce13"
-  integrity sha512-DWx9jDpun9JqDBypiXKjcYMm7gEnh83bry7b6UkItpmVE3w3tNrj91fOEPKDbFQZ7EULfFt+aQBbqtUHq5oNzQ==
+"@napi-rs/cli@^2.14.5":
+  version "2.14.5"
+  resolved "https://registry.yarnpkg.com/@napi-rs/cli/-/cli-2.14.5.tgz#49e0bde78d8aef3d8c2bcdd6b652adbe5d7b146a"
+  integrity sha512-E7WYAS1y1sTkLbZsOtf9Xs6fx/aOJ05UIm6cs7q1vHxpycYJRGtvEU8ilFTw6TPke68Hq1c+6Yd7Lklr4sj9EQ==
 
 "@napi-rs/triples@^1.1.0":
   version "1.1.0"
